@@ -21,11 +21,14 @@ const row = (bill) => {
   }
 
 const rows = (data) => {
-  console.log(new Date(data[0].date))
+  if(data){
+
   data.sort((a,b) => { return new Date(b.date) - new Date(a.date)})
+  /*
   data.forEach(e => {
-    formatDate(e.date)
-  });
+    e.date = formatDate(e.date)
+  });*/
+}
   return (data && data.length) ? data.map(bill => row(bill)).join("") : ""
 }
 

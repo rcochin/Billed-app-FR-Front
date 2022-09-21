@@ -4,8 +4,12 @@
 
 import LoginUI from "../views/LoginUI";
 import Login from "../containers/Login.js";
-import { ROUTES } from "../constants/routes";
+import { ROUTES, ROUTES_PATH } from "../constants/routes";
 import { fireEvent, screen } from "@testing-library/dom";
+
+const data = []
+const login = false
+const error = null
 
 describe("Given that I am a user on login page", () => {
   describe("When I do not fill fields and I click on employee button Login In", () => {
@@ -76,7 +80,7 @@ describe("Given that I am a user on login page", () => {
         },
         writable: true,
       });
-
+      
       // we have to mock navigation to test it
       const onNavigate = (pathname) => {
         document.body.innerHTML = ROUTES({ pathname });
@@ -93,7 +97,7 @@ describe("Given that I am a user on login page", () => {
         PREVIOUS_LOCATION,
         store,
       });
-
+      
       const handleSubmit = jest.fn(login.handleSubmitEmployee);
       login.login = jest.fn().mockResolvedValue({});
       form.addEventListener("submit", handleSubmit);
@@ -110,8 +114,11 @@ describe("Given that I am a user on login page", () => {
         })
       );
     });
-
+    
     test("It should renders Bills page", () => {
+      const pathname = ROUTES_PATH["Bills"]
+      const html = ROUTES({pathname,data,login,error})
+      document.body.innerHTML = html
       expect(screen.getAllByText("Mes notes de frais")).toBeTruthy();
     });
   });
@@ -222,7 +229,7 @@ describe("Given that I am a user on login page", () => {
         })
       );
     });
-
+    
     test("It should renders HR dashboard page", () => {
       expect(screen.queryByText("Validations")).toBeTruthy();
     });

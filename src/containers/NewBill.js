@@ -16,14 +16,14 @@ export default class NewBill {
     new Logout({ document, localStorage, onNavigate })
   }
   handleChangeFile = e => {
-    e.preventDefault()
+    /*e.preventDefault()
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
     const allowedExtensions = /(\.jpg|\.jpeg|\.png)$/i
     const filePath = e.target.value.split(/\\/g)
     if (!allowedExtensions.exec(filePath)) {
-      alert('Format de fichier invalide');
+      alert('Format de fichier invalide toto');
       document.querySelector(`input[data-testid="file"]`).value = '';
-      return false;
+      return false
     }else{
       const fileName = filePath[filePath.length-1]
       const formData = new FormData()
@@ -40,16 +40,44 @@ export default class NewBill {
           }
         })
         .then(({fileUrl, key}) => {
-          console.log(fileUrl)
           this.billId = key
           this.fileUrl = fileUrl
           this.fileName = fileName
         }).catch(error => console.error(error))
+    }*/
+    e.preventDefault()
+    const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
+    const filePath = e.target.value.split(/\\/g)
+    const fileName = filePath[filePath.length-1]
+    const fileExtension = file.type
+    const formData = new FormData()
+    const email = JSON.parse(localStorage.getItem("user")).email
+    formData.append('file', file)
+    formData.append('email', email)
+
+    if (fileExtension == "image/jpeg" || fileExtension == "image/png") {
+      this.store
+        .bills()
+        .create({
+          data: formData,
+          headers: {
+            noContentType: true
+          }
+        })
+        .then(({fileUrl, key}) => {
+          console.log(fileUrl)
+          this.billId = key
+          this.fileUrl = fileUrl
+          this.fileName = fileName
+          this.fileExtension = fileExtension
+        }).catch(error => console.error(error))
+    } else {
+      alert("Format du justificatif invalide ! Format accepté : .png .jpeg .jpg")
+      this.document.querySelector(`input[data-testid="file"]`).value = "" // prevent form to be submit because this input is required
     }
   }
   handleSubmit = e => {
     e.preventDefault()
-    console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
     const email = JSON.parse(localStorage.getItem("user")).email
     const bill = {
       email,
